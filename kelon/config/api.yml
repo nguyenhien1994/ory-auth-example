@@ -1,0 +1,13 @@
+apis:
+  # Route all requests starting with /api/mysql to mysql database
+  - path-prefix: /user
+    datastore: mysql
+    mappings:
+      - path: /.*               # Matches [GET,POST,PUT,DELETE,PATCH] /api/mysql/apps/.*
+        package: applications.mysql
+
+  - path-prefix: /post
+    datastore: mysql
+    mappings:
+    - path: /.*                      # Matches [GET,POST,PUT,DELETE,PATCH] /api/mysql/cars/.*
+      package: applications.mysql

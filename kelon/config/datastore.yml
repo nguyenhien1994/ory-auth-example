@@ -1,0 +1,24 @@
+# Datastores to connect to
+datastores:
+  mysql:
+    type: mysql
+    connection:
+      host: mysqld
+      port: 3306
+      database: demo
+      user: You
+      password: SuperSecure
+    metadata:
+      maxIdleConnections: 5
+      maxOpenConnections: 10
+      connectionMaxLifetimeSeconds: 1800
+      telemetryName: Datasource
+      telemetryType: MySQL
+
+# Entity-Schemas define the structure of the entities of one schema inside a datastore
+entity_schemas:
+  mysql:                                # Target datastore
+    demo:                               # Target schema
+      entities:                         # List of all entities of the schema
+        - name: user_role
+        - name: posts

@@ -1,0 +1,46 @@
+call-operands:
+
+  # Mathematical operands
+  - op: plus
+    args: 2
+    mapping: "$0 + $1"
+  - op: minus
+    args: 2
+    mapping: "$0 - $1"
+  - op: mul
+    args: 2
+    mapping: "$1 * $0"
+  - op: div
+    args: 2
+    mapping: "$0 / $1"
+  - op: rem
+    args: 2
+    mapping: "$0 % $1"
+
+  # Relational operands
+  - op: eq
+    args: 2
+    mapping: "$0 = $1"
+  - op: equal
+    args: 2
+    mapping: "$0 = $1"
+  - op: neq
+    args: 2
+    mapping: "$0 != $1"
+  - op: lt
+    args: 2
+    mapping: "$0 < $1"
+  - op: gt
+    args: 2
+    mapping: "$0 > $1"
+  - op: lte
+    args: 2
+    mapping: "$0 <= $1"
+  - op: gte
+    args: 2
+    mapping: "$0 >= $1"
+
+  # Mathematical Functions
+  - op: abs
+    args: 1
+    mapping: "ABS($0)"

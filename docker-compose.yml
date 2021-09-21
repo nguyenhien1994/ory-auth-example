@@ -1,0 +1,131 @@
+version: '3.7'
+
+services:
+  oathkeeper:
+    image: oryd/oathkeeper:v0.38
+    depends_on:
+      - kelon
+      - kratos
+    ports:
+      - 4455:4455 # a reverse proxy to protect the SecureApp.
+      # - 4456:4456 # Oathkeeper's API. This is made public only so we can test via the CLI.
+    command:
+      serve proxy -c "/etc/config/oathkeeper/oathkeeper.yml"
+    environment:
+      - LOG_LEVEL=debug
+    restart: on-failure
+    networks:
+      - intranet
+    volumes:
+      - ./oathkeeper:/etc/config/oathkeeper
+
+  kelon:
+    image: kelonio/kelon
+    restart: always
+    networks:
+      - intranet
+    ports:
+      - '8181:8181'
+      - '9191:9191'
+    volumes:
+      - ./kelon/config/:/conf
+      - ./kelon/call-operands/:/call-operands
+      - ./kelon/policies/:/policies
+    environment:
+      - DATASTORE_CONF=/conf/datastore.yml
+      - API_CONF=/conf/api.yml
+      - OPA_CONF=/conf/opa.yml
+      - REGO_DIR=/policies
+      - CONFIG_WATCHER_PATH=/policies
+      - LOG_LEVEL=DEBUG
+    depends_on:
+      - mysqld
+    stdin_open: true
+    tty: true
+
+  kratos-migrate:
+    image: oryd/kratos:v0.7.4-alpha.1
+    depends_on:
+      - mysqld
+    environment:
+      - DSN=mysql://You:SuperSecure@tcp(mysqld:3306)/demo?max_conns=20&max_idle_conns=4
+    volumes:
+      - type: volume
+        source: kratos-mysql
+        target: /var/lib/mysql
+        read_only: false
+      - type: bind
+        source: ./kratos
+        target: /etc/config/kratos
+    command: -c /etc/config/kratos/kratos.yml migrate sql -e --yes
+    restart: on-failure
+    networks:
+      - intranet
+
+  kratos-selfservice-ui-node:
+    depends_on:
+      - kratos
+    image: oryd/kratos-selfservice-ui-node:v0.7.4-alpha.1
+    environment:
+      - PORT=4435
+      - KRATOS_BROWSER_URL=http://127.0.0.1:4455/.ory/kratos/public
+      - JWKS_URL=http://oathkeeper:4456/.well-known/jwks.json
+      - SECURITY_MODE=jwks
+      - KRATOS_PUBLIC_URL=http://kratos:4433/
+      - KRATOS_ADMIN_URL=http://kratos:4434/
+    networks:
+      - intranet
+    restart: on-failure
+
+  kratos:
+    depends_on:
+      - kratos-migrate
+    image: oryd/kratos:v0.7.4-alpha.1
+    ports:
+      - '4433:4433' # Public ("Browser") API
+      - '4434:4434' # Admin API - This is made public only so we can test via the CLI.
+    restart: unless-stopped
+    environment:
+      - DSN=mysql://You:SuperSecure@tcp(mysqld:3306)/demo?max_conns=20&max_idle_conns=4
+      - LOG_LEVEL=trace
+      - SERVE_PUBLIC_BASE_URL=http://127.0.0.1:4455/.ory/kratos/public/
+    command: serve -c /etc/config/kratos/kratos.yml --dev --watch-courier
+    volumes:
+      - type: volume
+        source: kratos-mysql
+        target: /var/lib/mysql
+        read_only: false
+      - type: bind
+        source: ./kratos
+        target: /etc/config/kratos
+    networks:
+      - intranet
+
+  mysqld:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=demo
+      - MYSQL_USER=You
+      - MYSQL_PASSWORD=SuperSecure
+      - MYSQL_ROOT_PASSWORD=root-beats-everything
+    networks:
+      - intranet
+    volumes:
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  mailslurper:
+    image: oryd/mailslurper:latest-smtps
+    ports:
+      - '4436:4436'
+      - '4437:4437'
+    networks:
+      - intranet
+
+networks:
+  intranet:
+
+volumes:
+  kratos-mysql:
