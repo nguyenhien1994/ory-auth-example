@@ -8,6 +8,9 @@ start: ## start server
 	make -C demo_app/
 	docker-compose up --build --force-recreate -d
 
+stop: ## stop server
+	docker-compose down
+
 start_debug: ## start with debug
 	make -C demo_app/
 	docker-compose up --build --force-recreate
@@ -16,9 +19,10 @@ open: ## open browser
 	firefox https://127.0.0.1/
 
 clean: check_clean ## Clean docker containers, images, and volumes
-	docker rm $(docker ps -a -q)
-	docker image rm $(docker image ls -q)
-	docker volume rm $(docker volume ls -q)
+	rm -rf demo_app/bin
+	docker rm $$(docker ps -a -q) || true
+	docker image rm $$(docker image ls -q) || true
+	docker volume rm $$(docker volume ls -q) || true
 
 check_clean:
 	@echo -n -e "\033[0;33m" "Are you sure to clean docker containers, images, and volumes? [y/N] " && read ans && [ $${ans:-N} = y ]
