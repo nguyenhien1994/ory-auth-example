@@ -19,6 +19,26 @@ services:
     volumes:
       - ./oathkeeper:/etc/config/oathkeeper
 
+  demo_app:
+    image: alpine:latest
+    depends_on:
+      - kratos-migrate
+    environment:
+      PORT: 8080
+      JWKS_URL: "http://oathkeeper:4456/.well-known/jwks.json"
+      MYSQL_HOST: 'mysqld'
+      MYSQL_DATABASE: 'demo'
+      MYSQL_USER: 'You'
+      MYSQL_PASSWORD: 'SuperSecure'
+    networks:
+      - intranet
+    ports:
+      - 8080:8080
+    volumes:
+      - ./demo_app/bin/demo_app:/demo_app
+    restart: on-failure
+    command: /demo_app
+
   kelon:
     image: kelonio/kelon
     restart: always
@@ -38,6 +58,7 @@ services:
       - REGO_DIR=/policies
       - CONFIG_WATCHER_PATH=/policies
       - LOG_LEVEL=DEBUG
+      - RESPOND_WITH_STATUS_CODE=true
     depends_on:
       - mysqld
     stdin_open: true

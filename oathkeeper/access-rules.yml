@@ -60,14 +60,15 @@
         to: http://127.0.0.1:4455/auth/login
 
 -
-  id: "demo-app:protected"
+  id: "demo_app:protected"
   upstream:
     preserve_host: true
-    url: "http://demo-app:8080"
+    url: "http://demo_app:8080"
   match:
     url: "http://127.0.0.1:4455/<{user/*,post/*}>"
     methods:
       - GET
+      - PUT
   authenticators:
     -
       handler: cookie_session
@@ -75,7 +76,3 @@
     handler: remote_json
   mutators:
     - handler: id_token
-  errors:
-    - handler: redirect
-      config:
-        to: http://127.0.0.1:4455/auth/login
