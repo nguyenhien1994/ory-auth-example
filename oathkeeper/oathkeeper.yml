@@ -30,7 +30,7 @@ errors:
     redirect:
       enabled: true
       config:
-        to: http://127.0.0.1:4455/auth/login
+        to: https://127.0.0.1/auth/login
         when:
           -
             error:
@@ -97,7 +97,7 @@ mutators:
   id_token:
     enabled: true
     config:
-      issuer_url: http://127.0.0.1:4455/
+      issuer_url: https://127.0.0.1/
       jwks_url: file:///etc/config/oathkeeper/id_token.jwks.json
       claims: |
         {

@@ -11,9 +11,9 @@ serve:
     base_url: http://kratos:4434/
 
 selfservice:
-  default_browser_return_url: http://127.0.0.1:4455/
+  default_browser_return_url: https://127.0.0.1/
   whitelisted_return_urls:
-    - http://127.0.0.1:4455
+    - https://127.0.0.1
 
   methods:
     password:
@@ -21,33 +21,33 @@ selfservice:
 
   flows:
     error:
-      ui_url: http://127.0.0.1:4455/error
+      ui_url: https://127.0.0.1/error
 
     settings:
-      ui_url: http://127.0.0.1:4455/settings
+      ui_url: https://127.0.0.1/settings
       privileged_session_max_age: 15m
 
     recovery:
       enabled: true
-      ui_url: http://127.0.0.1:4455/recovery
+      ui_url: https://127.0.0.1/recovery
 
     verification:
       enabled: true
-      ui_url: http://127.0.0.1:4455/verify
+      ui_url: https://127.0.0.1/verify
       after:
-        default_browser_return_url: http://127.0.0.1:4455/
+        default_browser_return_url: https://127.0.0.1/
 
     logout:
       after:
-        default_browser_return_url: http://127.0.0.1:4455/auth/login
+        default_browser_return_url: https://127.0.0.1/auth/login
 
     login:
-      ui_url: http://127.0.0.1:4455/auth/login
+      ui_url: https://127.0.0.1/auth/login
       lifespan: 10m
 
     registration:
       lifespan: 10m
-      ui_url: http://127.0.0.1:4455/auth/registration
+      ui_url: https://127.0.0.1/auth/registration
       after:
         password:
           hooks:
