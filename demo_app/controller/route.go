@@ -11,7 +11,5 @@ func (s *Server) InitializeRoutes() {
 	{
 		authGroup.PUT("/user/:userid", Authorize(), api.UpdateUser)
 		authGroup.GET("/user/:userid", Authorize(), api.GetUser)
-		authGroup.GET("/post/:postid", Authorize(), api.GetPost)
-		authGroup.PUT("/post/:postid", Authorize(), api.UpdatePost)
 	}
 }

@@ -2,9 +2,9 @@ package main
 
 import (
 	_ "embed"
-	"fmt"
 	"log"
 	"os"
+	"strings"
 
 	"simple-go-auth/controller"
 	"simple-go-auth/services/mysql"
@@ -14,15 +14,13 @@ import (
 var query string
 
 func main() {
-	if err := InitMysql(); err != nil {
+	if err := InitMysql(); err != nil && !strings.Contains(err.Error(), "Trigger already exists") {
 		log.Fatalf("Can't init mysql %v", err)
 	}
 	Run()
 }
 
 func InitMysql() error {
-	fmt.Println("Executing query: ", query)
-
 	_, _, err := mysql.GetClientClient().ExecuteQuery(query)
 	return err
 }
