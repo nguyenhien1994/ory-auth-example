@@ -1,5 +1,5 @@
 # ory-auth-example
-Example of auth system with conbination of NGINX, Ory Oathkeeeper, Kratos and 
+Example of auth system with conbination of NGINX, Ory Oathkeeeper, Kratos and Kelon
 
 ## How to try?
 - Clone the repo:

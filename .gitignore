@@ -1,1 +1,3 @@
-./demo_app/bin
+demo_app/bin
+demo_app/.env
+nginx/ssl
